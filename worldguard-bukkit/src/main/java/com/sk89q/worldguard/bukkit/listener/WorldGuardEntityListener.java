@@ -631,6 +631,18 @@ public class WorldGuardEntityListener extends AbstractListener {
         }
     }
 
+    /**
+     * Track the creeper's player target when it primes, so the player stays the
+     * cause even if the explosion kills them before blocks are broken.
+     * The reference is cleared when the creeper explodes.
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCreeperPrime(ExplosionPrimeEvent event) {
+        if (event.getEntity() instanceof Creeper creeper && creeper.getTarget() instanceof Player player) {
+            Cause.trackParentCause(creeper, player);
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         ConfigurationManager cfg = getConfig();
